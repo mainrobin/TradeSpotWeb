@@ -3,31 +3,759 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeSpot - Coming Soon</title>
+    <title>TradeSpot | Building Materials Price Comparison for Tradies</title>
     <style>
+        :root {
+            --primary: #E42313; /* TradeSpot red */
+            --secondary: #000000; /* Black */
+            --dark: #333333;
+            --light: #F8F9FA;
+            --white: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1470');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 180px 5% 100px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .mission {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #c01e10;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background-color: white;
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 2rem 5%;
+            background-color: var(--primary);
+            color: white;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-description {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .features {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            display: inline-block;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .section-title h2:after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary);
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            background-color: white;
+            border-top: 5px solid var(--primary);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .value-props {
+            background-color: var(--light);
+            padding: 5rem 5%;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background-color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .value-prop {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .value-prop:last-child {
+            margin-bottom: 0;
+        }
+
+        .value-prop-icon {
+            flex: 0 0 80px;
+            height: 80px;
+            background-color: rgba(228, 35, 19, 0.1);
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f4f4f4;
+            font-size: 2rem;
+            color: var(--primary);
         }
-        .logo {
-            margin-bottom: 20px;
+
+        .value-prop-content h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
         }
-        h1 {
-            color: #333;
+
+        .testimonials {
+            padding: 5rem 5%;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1521790797524-b2497295b8a0?q=80&w=1469');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .testimonial-card:before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 5rem;
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .testimonial-info h4 {
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-info p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .download-section {
+            padding: 5rem 5%;
+            text-align: center;
+            background-color: white;
+        }
+
+        .app-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .app-badge {
+            height: 50px;
+            transition: transform 0.3s;
+        }
+
+        .app-badge:hover {
+            transform: scale(1.05);
+        }
+
+        .about-section {
+            padding: 5rem 5%;
+            background-color: var(--dark);
+            color: white;
+        }
+
+        .about-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .about-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .about-content h2:after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary);
+        }
+
+        .about-content p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .team-member {
+            text-align: center;
+        }
+
+        .team-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin: 0 auto 1rem;
+        }
+
+        .team-member h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .team-member p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            padding: 3rem 5% 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .social-link:hover {
+            background-color: var(--primary);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .mission {
+                font-size: 1.1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .about-container {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                display: none; /* Mobile menu would be needed */
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .value-prop {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Menu button for mobile */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="logo">
-        <img src="images/trade_spot_logo.png" alt="TradeSpot Logo">
-    </div>
-    <h1>TradeSpot is Coming Soon!</h1>
-    <p>Stay tuned for updates.</p>
-</body>
-</html>
+    <header>
+        <div class="logo-container">
+            <img src="images/tradespot_small.png" alt="TradeSpot Logo">
+        </div>
+        <nav>
+            <a href="#features">Features</a>
+            <a href="#for-suppliers">For Suppliers</a>
+            <a href="#for-tradies">For Tradies</a>
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <button class="mobile-menu-btn">☰</button>
+    </header>
+
+    <section class="hero">
+        <h1>Smart Pricing for <span>Smart Tradies</span></h1>
+        <p class="mission">Empowering the building and construction industry with real-time building material price comparison and streamlined quoting process to help reduce business costs and increase productivity.</p>
+    </section>
+    
+    <section class="features" id="features">
+        <div class="section-title">
+            <h2>Why TradeSpot?</h2>
+            <p>Built by tradies for tradies, our platform tackles the real problems faced in the industry.</p>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Real-Time Price Comparison</h3>
+                <p>Instantly compare prices across hundreds of suppliers in your area. Save up to 30% on materials by finding the best deals based on your job location and requirements.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Streamlined Quoting</h3>
+                <p>Generate professional quotes in minutes with our trade-specific tools. Automatically calculate quantities, apply your markup, and send branded proposals directly to clients.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Mobile-First Design</h3>
+                <p>Access everything you need from anywhere - on site, in your van, or at home. Our app is designed for the way tradies actually work, with offline capabilities for remote job sites.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>Business Insights</h3>
+                <p>Track job profitability, material usage trends, and supplier performance over time. Make data-driven decisions to improve your bottom line with easy-to-understand reports.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>Inventory Management</h3>
+                <p>Keep track of your materials across multiple job sites. Reduce waste and never run out of essential supplies with automatic reorder notifications.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>Trade Community</h3>
+                <p>Connect with other professionals, share supplier recommendations, and get help with complex jobs. Build your network and grow your business through qualified referrals.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="value-props" id="for-suppliers">
+        <div class="section-title">
+            <h2>Who Benefits from TradeSpot?</h2>
+            <p>Our platform creates value for everyone in the building materials supply chain.</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="suppliers">For Suppliers</button>
+            <button class="tab-btn" data-tab="tradies">For Tradies</button>
+            <button class="tab-btn" data-tab="investors">For Investors</button>
+        </div>
+
+        <div class="tab-content active" id="suppliers-tab">
+            <div class="value-prop">
+                <div class="value-prop-icon">🚀</div>
+                <div class="value-prop-content">
+                    <h3>Grow Digital Sales</h3>
+                    <p>TradeSpot helps grow sales and win digital customers without building your own tech. Get your products in front of qualified trade buyers with our easy-to-use platform.</p>
+                </div>
+            </div>
+            <div class="value-prop">
+                <div class="value-prop-icon">📱</div>
+                <div class="value-prop-content">
+                    <h3>Digital Presence Without the Hassle</h3>
+                    <p>No need to build your own e-commerce platform or app. TradeSpot gives you immediate digital visibility to thousands of active tradies looking to purchase materials.</p>
+                </div>
+            </div>
+            <div class="value-prop">
+                <div class="value-prop-icon">📊</div>
+                <div class="value-prop-content">
+                    <h3>Data-Driven Insights</h3>
+                    <p>Understand demand patterns, popular products, and pricing effectiveness. Make smarter inventory and pricing decisions with anonymized market data.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tradies-tab">
+            <div class="value-prop">
+                <div class="value-prop-icon">💰</div>
+                <div class="value-prop-content">
+                    <h3>Stop Overpaying</h3>
+                    <p>Stop overpaying for materials. TradeSpot gives you instant access to the best prices from local suppliers, saving you time and money on every job.</p>
+                </div>
+            </div>
+            <div class="value-prop">
+                <div class="value-prop-icon">⏱️</div>
+                <div class="value-prop-content">
+                    <h3>Save Hours Every Week</h3>
+                    <p>No more driving around for quotes or making endless phone calls. Find the best materials at the best prices in minutes, not days.</p>
+                </div>
+            </div>
+            <div class="value-prop">
+                <div class="value-prop-icon">📄</div>
+                <div class="value-prop-content">
+                    <h3>Professional Quotes Faster</h3>
+                    <p>Create detailed, professional quotes in a fraction of the time. Win more jobs with faster responses and transparent pricing.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="investors-tab">
+            <div class="value-prop">
+                <div class="value-prop-icon">🔍</div>
+                <div class="value-prop-content">
+                    <h3>Untapped Market Potential</h3>
+                    <p>TradeSpot is unlocking a huge offline market with a scalable, high-margin digital platform for trade supply. The construction materials market is worth billions yet remains largely undigitized.</p>
+                </div>
+            </div>
+            <div class="value-prop">
+                <div class="value-prop-icon">📈</div>
+                <div class="value-prop-content">
+                    <h3>Scalable Business Model</h3>
+                    <p>Our platform creates network effects - more suppliers attract more tradies, which attracts more suppliers. This creates a defensible market position with increasing returns to scale.</p>
+                </div>
+            </div>
+            <div class="value-prop">
+                <div class="value-prop-icon">💼</div>
+                <div class="value-prop-content">
+                    <h3>Multiple Revenue Streams</h3>
+                    <p>From subscription plans to transaction fees and premium features, our diversified revenue model provides stability and growth potential.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section" id="about">
+        <div class="about-container">
+            <div class="about-content">
+                <h2>Our Story</h2>
+                <p>Founded by a team of builders and software engineers frustrated with the lack of pricing transparency in the industry. We're on a mission to level the playing field for trades and suppliers alike.</p>
+                <p>After years of seeing tradies struggle with material pricing and quoting inefficiencies, we decided to build the tool we wished we had. Every feature in TradeSpot comes from real-world trade experience and solves genuine problems faced on job sites every day.</p>
+                <p>We aim to help tradies across Australia save time, reduce costs, and grow their businesses with better material sourcing and quoting tools.</p>
+            </div>
+            
